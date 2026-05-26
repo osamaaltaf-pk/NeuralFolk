@@ -17,6 +17,8 @@
 | Component | Test File | Scope / Purpose | Status |
 |---|---|---|---|
 | control-plane | [test_connections.py](file:///c:/Users/Microsoft/Downloads/NeuralFolk/tests/unit/test_connections.py) | Verifies Pydantic settings loading and database/Valkey lazy connection generators. | 🟢 Passing |
+| control-plane | [test_health_api.py](file:///c:/Users/Microsoft/Downloads/NeuralFolk/tests/unit/test_health_api.py) | Verifies FastAPI health route response structure using mock dependencies overrides. | 🟢 Passing |
+| control-plane | [test_live_connections.py](file:///c:/Users/Microsoft/Downloads/NeuralFolk/tests/integration/test_live_connections.py) | Integration check making live database/broker connections, skipping if offline. | 🟡 Skipped |
 
 ---
 
@@ -42,3 +44,4 @@ pytest tests/unit/test_connections.py -v
 | Date | Session | Commits Verified | Result | Notes |
 |---|---|---|---|---|
 | 2026-05-26 | 2 | `b807baf`, `db0217b` | 🟢 3/3 passed | Initial connection suite verifying database and Valkey client code. |
+| 2026-05-26 | 2 | `127c761`, `2b915c1` | 🟢 4/4 passed / 2 skipped | Added health route unit checks and connection integration tests. |
