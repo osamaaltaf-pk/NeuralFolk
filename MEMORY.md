@@ -1,7 +1,7 @@
 ## Last Updated
 <!-- AGENT: update this timestamp every session -->
 DATE: 2026-05-26
-SESSION: 1
+SESSION: 2
 
 ---
 
@@ -14,8 +14,8 @@ SESSION: 1
 - [x] .env.example with all variables documented
 - [x] Makefile with dev commands
 - [x] FastAPI skeleton with /health endpoint
-- [ ] Postgres connected (async SQLAlchemy)
-- [ ] Valkey connected (aioredis pointing to Valkey)
+- [x] Postgres connected (async SQLAlchemy)
+- [x] Valkey connected (aioredis pointing to Valkey)
 - [x] Pydantic settings (core/config.py)
 - [ ] InferenceRouter skeleton
 - [ ] Ollama backend connected
@@ -134,4 +134,5 @@ None yet — project not started.
 
 ## Last Session Notes
 <!-- AGENT: paste your own summary here at end of session -->
-Session 1: Initialized Git repository with author `osamaaltaf-pk`. Created the repository folder skeleton structure. Successfully created docker-compose.yml, docker-compose.dev.yml, .env.example, .env, and Makefile. Structured the FastAPI control-plane service, configuring Pydantic settings, structlog formatting, and the /health endpoint with comprehensive response schemas. Committed all initial scaffold files (822f6f6).
+Session 1: Initialized Git repository with author `osamaaltaf-pk`. Created folder skeleton and delivered configuration files (docker-compose, Makefile, .env, etc.) and basic FastAPI skeleton. Committed as chore(repo): initial scaffold (822f6f6).
+Session 2: Connected PostgreSQL (async SQLAlchemy 2.0 + asyncpg) and Valkey (valkey-py async client) to FastAPI. Configured async lifespan context manager in main.py for resource pools, and integrated live connection checks in health endpoint. Wrote automated test suite. Committed as feat(control-plane): add postgres and valkey core connectivity (b807baf).

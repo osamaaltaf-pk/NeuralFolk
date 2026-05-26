@@ -7,9 +7,9 @@
 ## Session Info
 
 ```
-SESSION:        1
+SESSION:        2
 DATE:           2026-05-26
-LAST_COMMIT:    822f6f6 — chore(repo): initial scaffold
+LAST_COMMIT:    b807baf — feat(control-plane): add postgres and valkey core connectivity
 ```
 
 ---
@@ -18,13 +18,12 @@ LAST_COMMIT:    822f6f6 — chore(repo): initial scaffold
 
 ```
 PHASE:          1 — Local Foundation
-TASK:           Initialize repo structure
+TASK:           Connect PostgreSQL & Valkey
 STATUS:         completed
 
 DESCRIPTION:
-  Create the full directory skeleton from AGENT.md Repo Structure section.
-  Then: docker-compose.yml, .env.example, Makefile, FastAPI /health endpoint.
-  Stop after those four deliverables and update this file.
+  Integrate asynchronous database connections (SQLAlchemy 2.0 + asyncpg) and cache/broker
+  connections (Valkey) into the control-plane service, and configure health checking.
 
 BLOCKED_BY:     none
 ```
@@ -44,10 +43,10 @@ none yet
 > Agent fills this in at END of session before handing off.
 
 ```
-Session 1 (repo setup): Git initialized. Folders structure skeleton created.
-Delivered core files: docker-compose.yml, docker-compose.dev.yml, .env.example, Makefile.
-Created FastAPI control-plane skeleton under services/control-plane/ with /health route.
-All changes committed: chore(repo): initial scaffold (822f6f6)
+Session 2 (DB & Valkey): Configured PostgreSQL (async SQLAlchemy 2.0 + asyncpg) in database.py
+and Valkey async client in valkey.py. Refactored main.py with modern async lifespan manager
+to handle pool setups. Integrated live pings into health route. Wrote unit tests in tests/unit/.
+All changes committed: feat(control-plane): add postgres and valkey core connectivity (b807baf)
 ```
 
 ---
@@ -60,7 +59,7 @@ All changes committed: chore(repo): initial scaffold (822f6f6)
 2. Read CONTEXT.md (this file)
 3. Read DIFF_MEMORY.md
 4. Check REVIEW.md for any new OPEN items
-5. Continue Phase 1: Connect PostgreSQL (async SQLAlchemy) and Valkey to control plane
+5. Continue Phase 1: Create InferenceRouter skeleton and connect Ollama backend
 ```
 
 ---
