@@ -9,7 +9,7 @@
 ```
 SESSION:        2
 DATE:           2026-05-26
-LAST_COMMIT:    fc43683 — test(control-plane): add health check api and connection integration tests
+LAST_COMMIT:    67f03ea — docs(repo): replace placeholder with production-level README.md
 ```
 
 ---
