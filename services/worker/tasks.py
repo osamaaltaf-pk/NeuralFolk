@@ -1,5 +1,6 @@
 import asyncio
 import os
+from typing import Optional
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy import text
 from worker.celery_app import app

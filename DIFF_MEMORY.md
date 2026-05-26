@@ -238,3 +238,68 @@ DISCOVERY: Running pytest on Windows terminal caused CP1252 codec UnicodeEncodeE
 IMPACT: Pytest integration runs aborted midway with encoding errors, preventing backend check-out.
 WORKAROUND: Substituted emoji symbols with CP1252-safe bracket characters (e.g. `[OK]`, `[WARN]`, `[FAIL]`, `[SKIP]`) in all print statements.
 ---
+
+--- BREAK 4 ---
+DATE: 2026-05-26
+COMMIT_THAT_BROKE: afad16f
+SYMPTOM: Worker container crashed on startup with `NameError: name 'Optional' is not defined` in `services/worker/tasks.py`.
+ROOT_CAUSE: `Optional[str]` was used in the `run_agent_loop` function signature but `Optional` was never imported from `typing`.
+AFFECTED_FILES: services/worker/tasks.py
+HOW_FOUND: runtime error (`docker compose logs worker`)
+---
+
+--- FIX 4 ---
+DATE: 2026-05-26
+FIXES_BREAK: 4
+COMMIT: pending
+WHAT_CHANGED: Added `from typing import Optional` to imports in `services/worker/tasks.py`.
+WHY_THIS_WORKS: `Optional` is not a builtin; it must be explicitly imported from `typing` in Python < 3.10 union syntax.
+REGRESSION_RISK: low
+TESTS_CREATED: none (verified via `docker compose logs worker` — Celery started cleanly and registered task)
+---
+
+--- BREAK 5 ---
+DATE: 2026-05-26
+COMMIT_THAT_BROKE: afad16f
+SYMPTOM: control-plane container perpetually `unhealthy` — Docker healthcheck returned 404.
+ROOT_CAUSE: `docker-compose.yml` healthcheck probed `http://localhost:8000/health` but all API routes are prefixed under `settings.API_V1_STR` (/api/v1), making the real path `/api/v1/health`.
+AFFECTED_FILES: docker-compose.yml
+HOW_FOUND: docker ps status + `docker compose logs control-plane` showing repeated 404 on /health
+---
+
+--- FIX 5 ---
+DATE: 2026-05-26
+FIXES_BREAK: 5
+COMMIT: pending
+WHAT_CHANGED: Updated control-plane healthcheck in `docker-compose.yml` to `http://localhost:8000/api/v1/health`.
+WHY_THIS_WORKS: Matches the actual FastAPI route path with API_V1_STR prefix applied.
+REGRESSION_RISK: low
+TESTS_CREATED: none (verified live: `Invoke-RestMethod http://localhost:8000/api/v1/health` returns `{"status":"ok"}`)
+---
+
+--- BREAK 6 ---
+DATE: 2026-05-26
+COMMIT_THAT_BROKE: afad16f
+SYMPTOM: vector-db (Qdrant) container perpetually `unhealthy` despite serving requests normally on port 6333.
+ROOT_CAUSE: `docker-compose.yml` healthcheck used `curl -f http://localhost:6333/health` but the `qdrant/qdrant:latest` image is a distroless binary — no curl, wget, or shell utilities in $PATH.
+AFFECTED_FILES: docker-compose.yml
+HOW_FOUND: docker exec returned "curl: executable file not found in $PATH"
+---
+
+--- FIX 6 ---
+DATE: 2026-05-26
+FIXES_BREAK: 6
+COMMIT: pending
+WHAT_CHANGED: Replaced curl-based Qdrant healthcheck with a bash TCP check: `bash -c 'echo > /dev/tcp/localhost/6333'`. Added `start_period: 10s` to avoid false failures at startup.
+WHY_THIS_WORKS: TCP socket check works without any installed CLI tools. Qdrant container ships with bash so /dev/tcp is available.
+REGRESSION_RISK: low
+TESTS_CREATED: none (verified: `docker ps` shows `neuralfolk-vector-db (healthy)`)
+---
+
+--- GOTCHA 2 ---
+DATE: 2026-05-26
+COMPONENT: docker-compose.yml / services/control-plane/Dockerfile
+DISCOVERY: The worker service shares the same Dockerfile as control-plane. That Dockerfile has `HEALTHCHECK CMD curl -f http://localhost:8000/api/v1/health`. Celery workers do NOT expose HTTP, so the inherited healthcheck always fails.
+IMPACT: Worker always shows `unhealthy` even when fully operational.
+WORKAROUND: Override the healthcheck in docker-compose.yml for the worker service using `celery -A worker.celery_app inspect ping` which pings the live Celery broker and returns `pong` if the worker is alive.
+---
