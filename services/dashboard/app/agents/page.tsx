@@ -64,10 +64,8 @@ export default function SpawnAgentPage() {
                 onChange={(e) => setModel(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
               >
-                <option value="miniCPM5-1B">miniCPM5-1B (32k context test model)</option>
-                <option value="qwen2.5:3b">qwen2.5:3b (fast routing model)</option>
-                <option value="qwen2.5:7b">qwen2.5:7b (smart planning model)</option>
-                <option value="deepseek-r1:7b">deepseek-r1:7b (reasoning model)</option>
+                <option value="miniCPM5-1B">miniCPM5-1B (32k context — primary test model)</option>
+                <option value="deepseek-r1:7b">deepseek-r1:7b (reasoning — optional)</option>
               </select>
             </div>
 

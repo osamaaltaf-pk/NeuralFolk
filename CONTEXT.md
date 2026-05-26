@@ -70,7 +70,7 @@ Session 5 (Docker Health Stabilization):
 4. Read CONTEXT.md (this file)
 5. Begin Phase 1 live inference testing:
    - Run tests/integration/test_live_inference.py against Ollama (already running on port 11434)
-   - Pull qwen2.5:3b via: docker exec neuralfolk-inference ollama pull qwen2.5:3b
+   - Pull miniCPM5-1B via: docker exec neuralfolk-inference ollama pull miniCPM5-1B
    - Test POST /api/v1/inference/chat with that model
    - Confirm end-to-end agent spawn → Celery → ReactiveAgent → search + fs tools works
 ```

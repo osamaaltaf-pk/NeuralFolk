@@ -20,7 +20,7 @@ No API keys. No vendor lock-in. Air-gap capable.
 GPU:    RTX 2070 · 8GB VRAM · CUDA 12 · Turing arch
 RAM:    16GB DDR4
 OS:     Ubuntu 24.04 or Windows WSL2
-Models: qwen2.5:3b (fast), qwen2.5:7b (smart) via Ollama
+Models: miniCPM5-1B (primary test, 32k ctx) via Ollama; qwen2.5:3b/7b optional
 ```
 
 ---

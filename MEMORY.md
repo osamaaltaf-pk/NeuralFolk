@@ -81,7 +81,7 @@ None. All Phase 1 Docker containers healthy. All 7 services running. Next: infer
 | Cache / broker | Valkey (not Redis) | Redis changed license 2024, Valkey is MIT fork |
 | Inference phase 1 | Ollama | Easiest local GPU setup, supports GGUF |
 | Inference phase 2+ | vLLM + SGLang + llama.cpp + TensorRT + LiteRT | Full backend matrix |
-| Primary local model | qwen2.5:7b (smart) + qwen2.5:3b (fast) | Fits in 8GB VRAM, good instruction following |
+| Primary local model | miniCPM5-1B (32k context, primary for all tests) | Canonical test model across all inference stacks; qwen2.5:3b/7b remain as optional alternatives |
 | Workflow engine | Celery + Valkey (phase 1), consider Temporal (phase 3) | MVP first |
 | Vector DB | Qdrant (local Docker) | Best Python SDK, good performance |
 | Knowledge graph | FalkorDB (local Docker) | Redis-compatible API, graph queries, MIT license |

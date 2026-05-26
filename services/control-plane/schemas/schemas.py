@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 class AgentSpawnRequest(BaseModel):
-    model: str = Field("qwen2.5:3b", description="Model identifier")
+    model: str = Field("miniCPM5-1B", description="Model identifier")
     task_summary: str = Field(..., description="Goal summary for the agent")
     hardware: Optional[str] = Field(None, description="Hardware constraints")
 
