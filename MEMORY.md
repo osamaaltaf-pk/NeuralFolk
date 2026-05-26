@@ -17,6 +17,7 @@ SESSION: 2
 - [x] Postgres connected (async SQLAlchemy)
 - [x] Valkey connected (aioredis pointing to Valkey)
 - [x] Pydantic settings (core/config.py)
+- [x] Test-Mandate Integration (created tests/TESTS.md and test guidelines implemented in constitution)
 - [ ] InferenceRouter skeleton
 - [ ] Ollama backend connected
 - [ ] qwen2.5:3b responding via /api/inference/chat

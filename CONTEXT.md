@@ -71,6 +71,7 @@ All changes committed: feat(control-plane): add postgres and valkey core connect
 - Valkey client: use `valkey` pip package, NOT `redis` — see AGENT.md NEVER DO list
 - SQLAlchemy: use 2.0 async style only, not 1.x legacy style
 - Docker base image: python:3.12-slim (resolved in REVIEW.md AD-001)
+- Testing Mandate: Dedicated test_*.py files must be created under tests/ and documented in tests/TESTS.md for any upgrade before proceeding.
 ```
 
 ---

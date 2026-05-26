@@ -47,6 +47,7 @@ COMMIT: {hash}
 WHAT_CHANGED: One sentence — the actual fix.
 WHY_THIS_WORKS: One sentence — why the fix addresses the root cause.
 REGRESSION_RISK: low | medium | high + one sentence if not low.
+TESTS_CREATED: list of test_*.py files verifying the fix and accuracy.
 ---
 ```
 
@@ -59,6 +60,7 @@ CONTEXT: One sentence — what were you implementing when this came up.
 CHOICE: What you chose to do.
 REJECTED: What you didn't do and why (the important part).
 CONSTRAINT: What external fact forced or shaped this choice.
+TESTS_CREATED: list of test_*.py files verifying this decision's correct operation.
 REVISIT_IF: Condition under which this decision should be re-evaluated.
 ---
 ```

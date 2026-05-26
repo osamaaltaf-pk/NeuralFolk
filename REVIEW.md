@@ -36,7 +36,7 @@ none yet — project not started
 ## CODE_REVIEW — Agent Self-Flagged Issues
 
 > Agent adds here when it writes code it's not confident in.
-> Format: FILE | ISSUE | SEVERITY (low/med/high) | SUGGESTED_FIX
+> Format: FILE | ISSUE | SEVERITY (low/med/high) | TESTS_CREATED (yes/no - specify file) | SUGGESTED_FIX
 
 ```
 none yet
@@ -60,6 +60,7 @@ none yet
 DATE: YYYY-MM-DD
 SESSION: {N}
 TYPE: code_risk | arch_decision | blocked | needs_test | security
+TESTS_CREATED: yes/no (specify test file in tests/ and update tests/TESTS.md)
 
 CONTEXT:
   What the agent was doing when it found this.

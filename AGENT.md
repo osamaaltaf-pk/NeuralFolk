@@ -115,6 +115,7 @@ grep -n "def function_name" services/           # find the line number
 ## How to Write Code
 
 ### Non-negotiable rules (from original AGENT.md):
+- **Test-Mandate** — For each new feature, stack update, or resolved issue, you MUST create corresponding `test_*.py` files in `tests/` and document/track tests in a `tests/TESTS.md` file to verify accuracy before proceeding to the next step.
 - **Async everywhere** — no blocking calls in async context, ever
 - **Pydantic v2** for all schemas and config
 - **SQLAlchemy 2.0 async** — not 1.x style
@@ -248,6 +249,7 @@ Before making ANY architecture decision:
 ❌ Self-host Kafka — use Valkey Streams (phase 1-2) or NATS JetStream (phase 3)
 ❌ Use print() for logging — use structlog
 ❌ Skip Pydantic validation on API inputs
+❌ Skip creating corresponding test_*.py files or updating tests/TESTS.md for any new feature, stack update, or fixed bug.
 ❌ Read an entire file when you need one function — use line ranges + grep
 ❌ Skip updating CONTEXT.md after finishing a task
 ❌ Write a DIFF_MEMORY.md entry for every commit — only breaks and decisions
@@ -414,6 +416,7 @@ See MEMORY.md for checklist. See CONTEXT.md for today's task.
 - [ ] Did I tick completed items in MEMORY.md?
 - [ ] If something broke or I made a non-obvious decision → did I write to DIFF_MEMORY.md?
 - [ ] Did I flag anything risky in REVIEW.md?
+- [ ] Did I create/update test.py files and tests/TESTS.md to verify accuracy of my changes?
 - [ ] Does `make lint` pass?
 - [ ] Are there any broken imports or unfinished functions?
 
