@@ -1,0 +1,25 @@
+services:
+  control-plane:
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./services/control-plane:/app
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+
+  worker:
+    command: watchfiles 'celery -A worker.celery_app worker --loglevel=debug' /app
+    volumes:
+      - ./services/control-plane:/app
+      - ./services/worker:/app/worker
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+
+  dashboard:
+    command: npm run dev
+    volumes:
+      - ./services/dashboard:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"

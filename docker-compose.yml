@@ -1,0 +1,131 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: neuralfolk-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-neuralfolk}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-neuralfolk}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  cache:
+    image: valkey/valkey:7.2-alpine
+    container_name: neuralfolk-cache
+    ports:
+      - "${VALKEY_PORT:-6379}:6379"
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  vector-db:
+    image: qdrant/qdrant:latest
+    container_name: neuralfolk-vector-db
+    ports:
+      - "${QDRANT_PORT:-6333}:6333"
+      - "${QDRANT_GRPC_PORT:-6334}:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  graph-db:
+    image: falkordb/falkordb:latest
+    container_name: neuralfolk-graph-db
+    ports:
+      - "${FALKORDB_PORT:-6379}:6379"
+    volumes:
+      - falkordb_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"] # FalkorDB is based on Redis/Valkey graph API
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  control-plane:
+    build:
+      context: ./services/control-plane
+      dockerfile: Dockerfile
+    container_name: neuralfolk-control-plane
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-true}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-neuralfolk}
+      - VALKEY_URL=redis://cache:6379/0
+      - CELERY_BROKER_URL=redis://cache:6379/0
+      - QDRANT_HOST=vector-db
+      - FALKORDB_HOST=graph-db
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://inference:11434}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./services/control-plane  # Standard monolith approach or worker setup
+      dockerfile: Dockerfile
+    container_name: neuralfolk-worker
+    command: celery -A worker.celery_app worker --loglevel=info
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-true}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-neuralfolk}
+      - VALKEY_URL=redis://cache:6379/0
+      - CELERY_BROKER_URL=redis://cache:6379/0
+      - QDRANT_HOST=vector-db
+      - FALKORDB_HOST=graph-db
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://inference:11434}
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: ./services/dashboard
+      dockerfile: Dockerfile
+    container_name: neuralfolk-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      - NEXT_PUBLIC_WS_URL=${NEXT_PUBLIC_WS_URL:-ws://localhost:8000/api/v1/events/ws}
+    depends_on:
+      - control-plane
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  valkey_data:
+  qdrant_data:
+  falkordb_data:
