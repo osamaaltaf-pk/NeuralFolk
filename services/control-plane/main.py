@@ -10,6 +10,8 @@ from core.config import settings
 from core.valkey import init_valkey, close_valkey
 from api.routes import health
 from api.routes import inference
+from api.routes import agents
+from api.routes import events_ws
 
 # Configure structlog
 logging.basicConfig(
@@ -39,20 +41,20 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Handles application startup and shutdown lifecycle events,
     initializing and disposing resource connection pools gracefully.
     """
-    # 1. Startup: Connect to Valkey pool
+    # 1. Startup: Database DDL auto-generation & Valkey connect
     try:
+        from core.database import Base, engine
+        from models.models import AgentModel, WorkflowModel # noqa: F401
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+            
         await init_valkey()
+        from core.events import publish_event
+        await publish_event("system.startup", {"version": "0.1.0", "hardware_detected": "CPU/GPU"})
     except Exception as e:
         await logger.acritical("lifespan_startup_failed", error=str(e))
         # In production, we might want to block startup; here we allow fallback for stubs
         pass
-
-    await logger.ainfo(
-        "system_startup",
-        project_name=settings.PROJECT_NAME,
-        environment=settings.ENVIRONMENT,
-        debug=settings.DEBUG,
-    )
 
     yield
 
@@ -82,3 +84,6 @@ app.add_middleware(
 # Register routes
 app.include_router(health.router, prefix=settings.API_V1_STR, tags=["System"])
 app.include_router(inference.router, prefix=settings.API_V1_STR, tags=["Inference"])
+app.include_router(agents.router, prefix=settings.API_V1_STR, tags=["Agents"])
+app.include_router(events_ws.router, prefix=settings.API_V1_STR, tags=["Events"])
+

@@ -76,3 +76,14 @@ async def get_health(
         qdrant=qdrant_health,
         falkordb=falkordb_health
     )
+
+class DirectEventPayload(BaseModel):
+    event_type: str = Field(..., description="The type of the event, e.g. agent.plan.created")
+    data: dict = Field(..., description="The dictionary containing custom event metadata")
+
+@router.post("/publish-event", status_code=status.HTTP_200_OK, summary="Internal route for publishing system events safely")
+async def publish_system_event(payload: DirectEventPayload) -> dict:
+    from core.events import publish_event
+    await publish_event(payload.event_type, payload.data)
+    return {"status": "event_published"}
+

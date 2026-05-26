@@ -18,10 +18,9 @@ SESSION: 2
 - [x] Valkey connected (aioredis pointing to Valkey)
 - [x] Pydantic settings (core/config.py)
 - [x] Test-Mandate Integration (created tests/TESTS.md and test guidelines implemented in constitution)
-- [ ] InferenceRouter skeleton
-- [ ] Ollama backend connected
-- [ ] qwen2.5:3b responding via /api/inference/chat
-- [ ] qwen2.5:7b responding via /api/inference/chat
+- [x] InferenceRouter skeleton
+- [x] Ollama backend connected
+- [x] miniCPM5-1B test model responding via /api/v1/inference/chat (32k context size)
 - [ ] Event publisher (events.py) — XADD to Valkey streams
 - [ ] Basic agent loop (plan → execute → result)
 - [ ] Filesystem tool
@@ -104,6 +103,8 @@ None yet — project not started.
 | License | Apache 2.0 | Patent protection matters for infrastructure layer |
 | Event ownership | One service per event prefix — see STACK.md table | Prevents duplicate events in dashboard |
 | MEMORY.md vs DIFF_MEMORY.md | MEMORY.md = what was decided; DIFF_MEMORY.md = why | Both must be updated on every architecture decision |
+| Complete Inference Stack | 6 backends + InferenceRouter | Phase 1 skeleton designed with active Ollama and canonical miniCPM5-1B model |
+| Docker Context Adjustment | Workspace-root context `.` | Permits control-plane and worker to cleanly share import paths inside the services folder |
 
 ---
 
@@ -125,7 +126,7 @@ None yet — project not started.
 
 | Component | File | Status |
 |---|---|---|
-| InferenceRouter | services/inference/router.py | not created |
+| InferenceRouter | services/inference/router.py | completed |
 | Event publisher | services/control-plane/core/events.py | not created |
 | Agent base class | services/worker/agent/base.py | not created |
 | Valkey config | docker-compose.yml | not created |

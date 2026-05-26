@@ -44,6 +44,7 @@ RUN groupadd -g 10001 neuralfolk && \
 # Copy application files (ensure owner is non-root)
 COPY --chown=neuralfolk:neuralfolk services/control-plane /app
 COPY --chown=neuralfolk:neuralfolk services/inference /app/inference
+COPY --chown=neuralfolk:neuralfolk services/worker /app/worker
 
 USER neuralfolk
 
