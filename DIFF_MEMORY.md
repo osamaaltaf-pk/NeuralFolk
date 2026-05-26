@@ -192,7 +192,7 @@ TESTS_CREATED: none (verified via docker compose up and docker ps status checks)
 
 --- DECISION 8 ---
 DATE: 2026-05-26
-COMMIT: local
+COMMIT: 8c7ee6c
 CONTEXT: Designing the InferenceRouter and its backend integrations.
 CHOICE: Implemented skeletons and adapters for the entire multi-backend inference matrix (Ollama, vLLM, SGLang, llama.cpp, TensorRT-LLM, LiteRT) in Phase 1, using miniCPM5-1B as canonical 32k model.
 REJECTED: Postponing other backends until Phase 2; implementing them now enables verification of the complete intelligent routing heuristics and graceful Ollama fallback logic immediately.
@@ -203,7 +203,7 @@ REVISIT_IF: A new major local inference backend engine emerges that is not in th
 
 --- DECISION 9 ---
 DATE: 2026-05-26
-COMMIT: local
+COMMIT: 8c7ee6c
 CONTEXT: Packaging the shared `services/inference` folder for both control-plane and worker containers.
 CHOICE: Adjusted Docker build context to workspace root `.` and updated COPY/volume mount instructions.
 REJECTED: Duplicating the codebase inside both control-plane and worker folders (which breaks monorepo style), or packaging as a private wheel (which complicates local dev builds).

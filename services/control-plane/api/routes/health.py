@@ -3,6 +3,7 @@ from fastapi import APIRouter, status, Depends
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+from valkey.asyncio import Valkey
 import structlog
 
 from core.database import get_db
@@ -33,7 +34,7 @@ class HealthResponse(BaseModel):
 )
 async def get_health(
     db: AsyncSession = Depends(get_db),
-    valkey_client = Depends(get_valkey)
+    valkey_client: Valkey = Depends(get_valkey)
 ) -> HealthResponse:
     """
     Evaluates the connectivity and performance of all downstream dependency systems

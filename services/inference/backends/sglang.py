@@ -10,7 +10,7 @@ class SGLangBackend(BaseInferenceBackend):
         self,
         model: str,
         messages: List[Dict[str, str]],
-        temperature: float = 0.7,
+        temperature: Optional[float] = 0.7,
         max_tokens: Optional[int] = None,
     ) -> Dict[str, Any]:
         url = f"{self.base_url}/v1/chat/completions"

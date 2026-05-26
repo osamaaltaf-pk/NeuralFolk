@@ -9,7 +9,7 @@ class LiteRTBackend(BaseInferenceBackend):
         self,
         model: str,
         messages: List[Dict[str, str]],
-        temperature: float = 0.7,
+        temperature: Optional[float] = 0.7,
         max_tokens: Optional[int] = None,
     ) -> Dict[str, Any]:
         # LiteRT runs locally via NDK/bindings, so we stub its execution logic

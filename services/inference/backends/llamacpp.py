@@ -10,7 +10,7 @@ class LlamaCppBackend(BaseInferenceBackend):
         self,
         model: str,
         messages: List[Dict[str, str]],
-        temperature: float = 0.7,
+        temperature: Optional[float] = 0.7,
         max_tokens: Optional[int] = None,
     ) -> Dict[str, Any]:
         # llama.cpp server exposes /v1/chat/completions in its standard server binary

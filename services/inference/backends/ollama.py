@@ -1,4 +1,4 @@
-from ollama import AsyncClient  # type: ignore[attr-defined]
+from ollama import AsyncClient
 from typing import List, Dict, Any, Optional
 from inference.backends.base import BaseInferenceBackend
 import structlog
@@ -14,7 +14,7 @@ class OllamaBackend(BaseInferenceBackend):
         self,
         model: str,
         messages: List[Dict[str, str]],
-        temperature: float = 0.7,
+        temperature: Optional[float] = 0.7,
         max_tokens: Optional[int] = None,
     ) -> Dict[str, Any]:
         options = {"temperature": temperature}

@@ -27,7 +27,7 @@ class InferenceRouter:
         self,
         model: str,
         messages: List[Dict[str, str]],
-        temperature: float = 0.7,
+        temperature: Optional[float] = 0.7,
         max_tokens: Optional[int] = None,
         task_type: Optional[str] = None,
         context_length: Optional[int] = None,
