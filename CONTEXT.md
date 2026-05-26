@@ -8,8 +8,8 @@
 
 ```
 SESSION:        1
-DATE:           not started
-LAST_COMMIT:    none — repo not initialized
+DATE:           2026-05-26
+LAST_COMMIT:    822f6f6 — chore(repo): initial scaffold
 ```
 
 ---
@@ -19,7 +19,7 @@ LAST_COMMIT:    none — repo not initialized
 ```
 PHASE:          1 — Local Foundation
 TASK:           Initialize repo structure
-STATUS:         not started
+STATUS:         completed
 
 DESCRIPTION:
   Create the full directory skeleton from AGENT.md Repo Structure section.
@@ -44,9 +44,10 @@ none yet
 > Agent fills this in at END of session before handing off.
 
 ```
-Session 0 (planning): No code written. Architecture decisions made.
-All decisions recorded in MEMORY.md and DIFF_MEMORY.md.
-Repo not yet initialized.
+Session 1 (repo setup): Git initialized. Folders structure skeleton created.
+Delivered core files: docker-compose.yml, docker-compose.dev.yml, .env.example, Makefile.
+Created FastAPI control-plane skeleton under services/control-plane/ with /health route.
+All changes committed: chore(repo): initial scaffold (822f6f6)
 ```
 
 ---
@@ -59,7 +60,7 @@ Repo not yet initialized.
 2. Read CONTEXT.md (this file)
 3. Read DIFF_MEMORY.md
 4. Check REVIEW.md for any new OPEN items
-5. Continue Phase 1: repo init → docker-compose → Makefile → FastAPI skeleton
+5. Continue Phase 1: Connect PostgreSQL (async SQLAlchemy) and Valkey to control plane
 ```
 
 ---

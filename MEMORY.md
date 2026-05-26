@@ -1,7 +1,7 @@
 ## Last Updated
 <!-- AGENT: update this timestamp every session -->
-DATE: not started yet
-SESSION: 0
+DATE: 2026-05-26
+SESSION: 1
 
 ---
 
@@ -9,14 +9,14 @@ SESSION: 0
 <!-- AGENT: tick boxes and add notes as features are completed -->
 
 ### Phase 1 — Local Foundation
-- [ ] Repo initialized with structure from AGENT.md
-- [ ] docker-compose.yml (postgres, valkey, qdrant, control-plane, worker, dashboard)
-- [ ] .env.example with all variables documented
-- [ ] Makefile with dev commands
-- [ ] FastAPI skeleton with /health endpoint
+- [x] Repo initialized with structure from AGENT.md
+- [x] docker-compose.yml (postgres, valkey, qdrant, control-plane, worker, dashboard)
+- [x] .env.example with all variables documented
+- [x] Makefile with dev commands
+- [x] FastAPI skeleton with /health endpoint
 - [ ] Postgres connected (async SQLAlchemy)
 - [ ] Valkey connected (aioredis pointing to Valkey)
-- [ ] Pydantic settings (core/config.py)
+- [x] Pydantic settings (core/config.py)
 - [ ] InferenceRouter skeleton
 - [ ] Ollama backend connected
 - [ ] qwen2.5:3b responding via /api/inference/chat
@@ -134,4 +134,4 @@ None yet — project not started.
 
 ## Last Session Notes
 <!-- AGENT: paste your own summary here at end of session -->
-Project planning phase. No code written yet. Ready to start Phase 1 Week 1.
+Session 1: Initialized Git repository with author `osamaaltaf-pk`. Created the repository folder skeleton structure. Successfully created docker-compose.yml, docker-compose.dev.yml, .env.example, .env, and Makefile. Structured the FastAPI control-plane service, configuring Pydantic settings, structlog formatting, and the /health endpoint with comprehensive response schemas. Committed all initial scaffold files (822f6f6).
