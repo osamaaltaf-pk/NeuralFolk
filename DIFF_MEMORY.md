@@ -211,3 +211,30 @@ CONSTRAINT: Must permit rapid local dev hot-reloads of shared library files.
 TESTS_CREATED: none (verified via docker compose up and mock tests)
 REVISIT_IF: We transition to a strictly decentralized microservices layout with separate repositories.
 ---
+
+--- BREAK 3 ---
+DATE: 2026-05-26
+COMMIT_THAT_BROKE: pre-existing
+SYMPTOM: Worker container continuously restarted with `ModuleNotFoundError: No module named 'worker'`.
+ROOT_CAUSE: The `services/worker` directory was not packaged in the control-plane Dockerfile, and the worker's celery application module was not implemented.
+AFFECTED_FILES: services/control-plane/Dockerfile, services/worker/celery_app.py
+HOW_FOUND: runtime error (`docker compose logs worker`)
+---
+
+--- FIX 3 ---
+DATE: 2026-05-26
+FIXES_BREAK: 3
+COMMIT: afad16f
+WHAT_CHANGED: Implemented `services/worker/celery_app.py`, created reactive loop structures, and updated Dockerfile to copy `/app/worker`.
+WHY_THIS_WORKS: Ensures the Celery daemon has the full imports and task entrypoints correctly packaged inside the built runtime container image.
+REGRESSION_RISK: low
+TESTS_CREATED: tests/unit/test_agent_flow.py
+---
+
+--- GOTCHA 1 ---
+DATE: 2026-05-26
+COMPONENT: tests/integration/test_live_inference.py
+DISCOVERY: Running pytest on Windows terminal caused CP1252 codec UnicodeEncodeError when attempting to print raw checkmark/cross unicode emojis.
+IMPACT: Pytest integration runs aborted midway with encoding errors, preventing backend check-out.
+WORKAROUND: Substituted emoji symbols with CP1252-safe bracket characters (e.g. `[OK]`, `[WARN]`, `[FAIL]`, `[SKIP]`) in all print statements.
+---
