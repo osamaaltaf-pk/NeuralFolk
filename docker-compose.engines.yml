@@ -1,0 +1,152 @@
+# docker-compose.engines.yml
+# ──────────────────────────────────────────────────────────────────────────────
+# Optional inference engine profiles for NeuralFolk.
+# Use alongside the main docker-compose.yml:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.engines.yml \
+#       --profile vllm up -d vllm
+#
+# Or start all engines (requires GPU + model files):
+#   docker compose -f docker-compose.yml -f docker-compose.engines.yml \
+#       --profile vllm --profile sglang --profile llamacpp --profile tensorrt up -d
+#
+# Port map (avoids collision with control-plane on 8000):
+#   Ollama     → 11434  (in main docker-compose.yml)
+#   vLLM       → 8001
+#   SGLang     → 30000
+#   llama.cpp  → 8080
+#   TensorRT   → 8002
+# ──────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── vLLM — Continuous batching, GPU required ─────────────────────────────
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: neuralfolk-vllm
+    profiles: ["vllm"]
+    command: >
+      --model openbmb/MiniCPM-1B-sft-bf16
+      --served-model-name miniCPM5-1B
+      --host 0.0.0.0
+      --port 8000
+      --max-model-len 32768
+      --dtype bfloat16
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-}
+      - CUDA_VISIBLE_DEVICES=0
+    ports:
+      - "8001:8000"
+    volumes:
+      - models_data:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  # ── SGLang — Long-context, structured output, GPU required ───────────────
+  sglang:
+    image: lmsysorg/sglang:latest
+    container_name: neuralfolk-sglang
+    profiles: ["sglang"]
+    command: >
+      python -m sglang.launch_server
+      --model-path openbmb/MiniCPM-1B-sft-bf16
+      --served-model-name miniCPM5-1B
+      --host 0.0.0.0
+      --port 30000
+      --context-length 32768
+      --dtype bfloat16
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-}
+    ports:
+      - "30000:30000"
+    volumes:
+      - models_data:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:30000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+
+  # ── llama.cpp — CPU/low-VRAM, no GPU required ────────────────────────────
+  # Requires GGUF model file at path set by MODELS_PATH env var (default ./models/)
+  # Download: ollama pull miniCPM5-1B then export, or download GGUF from HuggingFace
+  llamacpp:
+    image: ghcr.io/ggerganov/llama.cpp:server
+    container_name: neuralfolk-llamacpp
+    profiles: ["llamacpp"]
+    command: >
+      -m /models/miniCPM5-1B.gguf
+      --host 0.0.0.0
+      --port 8080
+      --ctx-size 32768
+      --threads 8
+      --n-gpu-layers 0
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${MODELS_PATH:-./models}:/models:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ── TensorRT-LLM — NVIDIA-optimized, requires pre-compiled TRT engine ─────
+  # Build TRT engine first: see deployment/tensorrt/build_engine.sh
+  tensorrt:
+    image: nvcr.io/nvidia/tritonserver:24.01-trtllm-python-py3
+    container_name: neuralfolk-tensorrt
+    profiles: ["tensorrt"]
+    command: >
+      tritonserver
+      --model-repository=/engines
+      --http-port=8000
+      --grpc-port=8001
+      --log-verbose=1
+    ports:
+      - "8002:8000"
+      - "8003:8001"
+    volumes:
+      - ${TENSORRT_ENGINES_PATH:-./engines}:/engines:ro
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/v2/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+volumes:
+  models_data:
