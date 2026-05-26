@@ -151,3 +151,41 @@ REJECTED: MIT — simpler but no patent protection. For an infrastructure/runtim
 CONSTRAINT: Must be OSI-approved; must allow commercial use; must not be GPL (copyleft would block enterprise adoption).
 REVISIT_IF: Legal counsel advises otherwise or a key dependency forces license compatibility change.
 ---
+
+--- BREAK 1 ---
+DATE: 2026-05-26
+COMMIT_THAT_BROKE: pre-existing
+SYMPTOM: Running pytest failed due to TypeError in test_health_api.py AsyncClient instantiation.
+ROOT_CAUSE: Modern versions of HTTPX (0.27.0+) deprecated the `app` keyword argument in AsyncClient.
+AFFECTED_FILES: tests/unit/test_health_api.py
+HOW_FOUND: test failure (pytest tests/)
+---
+
+--- FIX 1 ---
+DATE: 2026-05-26
+FIXES_BREAK: 1
+COMMIT: c42703d
+WHAT_CHANGED: Refactored test_health_api.py to use `ASGITransport(app=app)` under `httpx.AsyncClient`.
+WHY_THIS_WORKS: ASGI transport abstracts the FastAPI app routing cleanly in modern HTTPX versions.
+REGRESSION_RISK: low
+TESTS_CREATED: tests/unit/test_health_api.py
+---
+
+--- BREAK 2 ---
+DATE: 2026-05-26
+COMMIT_THAT_BROKE: pre-existing
+SYMPTOM: Docker compose failed to bring up cache and graph-db services due to port 6379 being in use.
+ROOT_CAUSE: Both Valkey and FalkorDB containers attempted to bind host port 6379 on the same local network interface.
+AFFECTED_FILES: .env, .env.example
+HOW_FOUND: runtime error (docker compose up)
+---
+
+--- FIX 2 ---
+DATE: 2026-05-26
+FIXES_BREAK: 2
+COMMIT: c42703d
+WHAT_CHANGED: Remapped FalkorDB host port to 6380 in .env and .env.example.
+WHY_THIS_WORKS: Exposes FalkorDB on host port 6380 while preserving internal Docker network port 6379.
+REGRESSION_RISK: low
+TESTS_CREATED: none (verified via docker compose up and docker ps status checks)
+---

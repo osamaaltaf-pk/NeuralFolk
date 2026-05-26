@@ -47,6 +47,8 @@ Session 2 (DB & Valkey): Configured PostgreSQL (async SQLAlchemy 2.0 + asyncpg) 
 and Valkey async client in valkey.py. Refactored main.py with modern async lifespan manager
 to handle pool setups. Integrated live pings into health route. Wrote unit tests in tests/unit/.
 All changes committed: feat(control-plane): add postgres and valkey core connectivity (b807baf)
+
+Also performed Docker ready check: resolved port conflict between cache and graph-db by moving FalkorDB to host port 6380, upgraded test_health_api.py AsyncClient syntax for modern HTTPX, and successfully executed all 6/6 unit and integration tests green.
 ```
 
 ---
@@ -55,11 +57,9 @@ All changes committed: feat(control-plane): add postgres and valkey core connect
 > Agent fills this at END of session.
 
 ```
-1. git log --oneline -10
+1. git status
 2. Read CONTEXT.md (this file)
-3. Read DIFF_MEMORY.md
-4. Check REVIEW.md for any new OPEN items
-5. Continue Phase 1: Create InferenceRouter skeleton and connect Ollama backend
+3. Continue Phase 1: Create InferenceRouter skeleton and connect Ollama backend
 ```
 
 ---

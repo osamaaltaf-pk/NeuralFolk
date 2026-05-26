@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from main import app
 from core.database import get_db
 from core.valkey import get_valkey
@@ -43,7 +43,7 @@ async def test_health_check_endpoint_success() -> None:
     Verifies that the /health endpoint returns an OK status and correct JSON
     schema structure when downstream services are operational.
     """
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/api/v1/health")
 
     assert response.status_code == 200

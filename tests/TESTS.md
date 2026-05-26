@@ -45,3 +45,4 @@ pytest tests/unit/test_connections.py -v
 |---|---|---|---|---|
 | 2026-05-26 | 2 | `b807baf`, `db0217b` | 🟢 3/3 passed | Initial connection suite verifying database and Valkey client code. |
 | 2026-05-26 | 2 | `127c761`, `2b915c1` | 🟢 4/4 passed / 2 skipped | Added health route unit checks and connection integration tests. |
+| 2026-05-26 | 2 | `67f03ea` | 🟢 6/6 passed | Resolved HTTPX AsyncClient deprecation, resolved falkordb host port collision, and verified live database integration connections. |
