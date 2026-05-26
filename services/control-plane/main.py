@@ -1,9 +1,13 @@
 import logging
 import sys
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import structlog
+
 from core.config import settings
+from core.valkey import init_valkey, close_valkey
 from api.routes import health
 
 # Configure structlog
@@ -27,12 +31,42 @@ structlog.configure(
 
 logger = structlog.get_logger()
 
-# Initialize FastAPI App
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """
+    Handles application startup and shutdown lifecycle events,
+    initializing and disposing resource connection pools gracefully.
+    """
+    # 1. Startup: Connect to Valkey pool
+    try:
+        await init_valkey()
+    except Exception as e:
+        await logger.acritical("lifespan_startup_failed", error=str(e))
+        # In production, we might want to block startup; here we allow fallback for stubs
+        pass
+
+    await logger.ainfo(
+        "system_startup",
+        project_name=settings.PROJECT_NAME,
+        environment=settings.ENVIRONMENT,
+        debug=settings.DEBUG,
+    )
+
+    yield
+
+    # 2. Shutdown: Dispose Valkey pool
+    await close_valkey()
+    await logger.ainfo("system_shutdown_completed")
+
+
+# Initialize FastAPI App with modern lifespan manager
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="The self-hosted AI runtime OS control plane.",
     version="0.1.0",
     debug=settings.DEBUG,
+    lifespan=lifespan,
 )
 
 # CORS Middleware
@@ -46,16 +80,3 @@ app.add_middleware(
 
 # Register routes
 app.include_router(health.router, prefix=settings.API_V1_STR, tags=["System"])
-
-
-@app.on_event("startup")
-async def startup_event() -> None:
-    """
-    Triggers startup log output and events when the control plane launches.
-    """
-    await logger.ainfo(
-        "system_startup",
-        project_name=settings.PROJECT_NAME,
-        environment=settings.ENVIRONMENT,
-        debug=settings.DEBUG,
-    )
