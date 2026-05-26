@@ -62,8 +62,8 @@ services:
 
   control-plane:
     build:
-      context: ./services/control-plane
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/control-plane/Dockerfile
     container_name: neuralfolk-control-plane
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-development}
@@ -90,8 +90,8 @@ services:
 
   worker:
     build:
-      context: ./services/control-plane  # Standard monolith approach or worker setup
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/control-plane/Dockerfile
     container_name: neuralfolk-worker
     command: celery -A worker.celery_app worker --loglevel=info
     environment:

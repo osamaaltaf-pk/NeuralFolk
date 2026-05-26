@@ -9,6 +9,7 @@ import structlog
 from core.config import settings
 from core.valkey import init_valkey, close_valkey
 from api.routes import health
+from api.routes import inference
 
 # Configure structlog
 logging.basicConfig(
@@ -80,3 +81,4 @@ app.add_middleware(
 
 # Register routes
 app.include_router(health.router, prefix=settings.API_V1_STR, tags=["System"])
+app.include_router(inference.router, prefix=settings.API_V1_STR, tags=["Inference"])

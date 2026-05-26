@@ -3,6 +3,7 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./services/control-plane:/app
+      - ./services/inference:/app/inference
     environment:
       - ENVIRONMENT=development
       - DEBUG=true
@@ -12,6 +13,7 @@ services:
     volumes:
       - ./services/control-plane:/app
       - ./services/worker:/app/worker
+      - ./services/inference:/app/inference
     environment:
       - ENVIRONMENT=development
       - DEBUG=true

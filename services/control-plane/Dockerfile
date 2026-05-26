@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy dependencies list
-COPY requirements.txt .
+COPY services/control-plane/requirements.txt .
 
 # Install dependencies into system site-packages (safe in this container stage)
 RUN uv pip install --system -r requirements.txt
@@ -42,7 +42,8 @@ RUN groupadd -g 10001 neuralfolk && \
     chown -R neuralfolk:neuralfolk /app
 
 # Copy application files (ensure owner is non-root)
-COPY --chown=neuralfolk:neuralfolk . .
+COPY --chown=neuralfolk:neuralfolk services/control-plane /app
+COPY --chown=neuralfolk:neuralfolk services/inference /app/inference
 
 USER neuralfolk
 
