@@ -251,7 +251,7 @@ HOW_FOUND: runtime error (`docker compose logs worker`)
 --- FIX 4 ---
 DATE: 2026-05-26
 FIXES_BREAK: 4
-COMMIT: pending
+COMMIT: ccd6a4d
 WHAT_CHANGED: Added `from typing import Optional` to imports in `services/worker/tasks.py`.
 WHY_THIS_WORKS: `Optional` is not a builtin; it must be explicitly imported from `typing` in Python < 3.10 union syntax.
 REGRESSION_RISK: low
@@ -270,7 +270,7 @@ HOW_FOUND: docker ps status + `docker compose logs control-plane` showing repeat
 --- FIX 5 ---
 DATE: 2026-05-26
 FIXES_BREAK: 5
-COMMIT: pending
+COMMIT: ccd6a4d
 WHAT_CHANGED: Updated control-plane healthcheck in `docker-compose.yml` to `http://localhost:8000/api/v1/health`.
 WHY_THIS_WORKS: Matches the actual FastAPI route path with API_V1_STR prefix applied.
 REGRESSION_RISK: low
@@ -289,11 +289,22 @@ HOW_FOUND: docker exec returned "curl: executable file not found in $PATH"
 --- FIX 6 ---
 DATE: 2026-05-26
 FIXES_BREAK: 6
-COMMIT: pending
+COMMIT: ccd6a4d
 WHAT_CHANGED: Replaced curl-based Qdrant healthcheck with a bash TCP check: `bash -c 'echo > /dev/tcp/localhost/6333'`. Added `start_period: 10s` to avoid false failures at startup.
 WHY_THIS_WORKS: TCP socket check works without any installed CLI tools. Qdrant container ships with bash so /dev/tcp is available.
 REGRESSION_RISK: low
 TESTS_CREATED: none (verified: `docker ps` shows `neuralfolk-vector-db (healthy)`)
+---
+
+--- DECISION 10 ---
+DATE: 2026-05-26
+COMMIT: ccd6a4d
+CONTEXT: worker shares control-plane Dockerfile which bakes in `HEALTHCHECK CMD curl http://localhost:8000/api/v1/health`. Celery worker has no HTTP listener.
+CHOICE: Override the Dockerfile HEALTHCHECK in docker-compose.yml for the worker service with `celery -A worker.celery_app inspect ping`. This is the canonical Celery health probe.
+REJECTED: (A) Writing a separate Dockerfile just for the worker — would require duplicating the entire 60-line multi-stage build for a one-line difference. (B) Disabling the healthcheck entirely (`test: ["NONE"]`) — removes observability; we'd have no signal when Celery loses its broker connection.
+CONSTRAINT: Same Docker image must be reusable for both control-plane (HTTP) and worker (Celery) to avoid build duplication while maintaining correct health semantics for each.
+TESTS_CREATED: none
+REVISIT_IF: Worker gets its own Dockerfile (then bake the Celery ping directly into it and remove the docker-compose override).
 ---
 
 --- GOTCHA 2 ---

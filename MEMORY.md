@@ -1,7 +1,7 @@
 ## Last Updated
 <!-- AGENT: update this timestamp every session -->
 DATE: 2026-05-26
-SESSION: 2
+SESSION: 5
 
 ---
 
@@ -21,18 +21,18 @@ SESSION: 2
 - [x] InferenceRouter skeleton
 - [x] Ollama backend connected
 - [x] miniCPM5-1B test model responding via /api/v1/inference/chat (32k context size)
-- [ ] Event publisher (events.py) — XADD to Valkey streams
-- [ ] Basic agent loop (plan → execute → result)
-- [ ] Filesystem tool
-- [ ] Web search tool (DuckDuckGo)
-- [ ] /api/agents/spawn endpoint
-- [ ] Celery worker connected
-- [ ] Next.js dashboard scaffold
-- [ ] Dashboard: system overview page
-- [ ] Dashboard: live event stream (WebSocket → Valkey XREAD)
-- [ ] Dashboard: workflow trigger UI
+- [x] Event publisher (events.py) — XADD to Valkey streams
+- [x] Basic agent loop (plan → execute → result)
+- [x] Filesystem tool
+- [x] Web search tool (DuckDuckGo)
+- [x] /api/agents/spawn endpoint
+- [x] Celery worker connected
+- [x] Next.js dashboard scaffold
+- [x] Dashboard: system overview page
+- [x] Dashboard: live event stream (WebSocket → Valkey XREAD)
+- [x] Dashboard: workflow trigger UI
 - [ ] ngrok tunnel working
-- [ ] README.md written with architecture diagram
+- [x] README.md written with architecture diagram
 
 ### Phase 2 — Kafka+ (Valkey Streams upgrade)
 - [ ] Full Valkey Streams event schema (all events from STACK.md)
@@ -67,7 +67,7 @@ SESSION: 2
 
 ## Current Blockers
 <!-- AGENT: list anything that is stuck or needs a decision -->
-None yet — project not started.
+None. All Phase 1 Docker containers healthy. All 7 services running. Next: inference engine sequential live testing (Ollama first, then vLLM etc).
 
 ---
 
@@ -127,10 +127,19 @@ None yet — project not started.
 | Component | File | Status |
 |---|---|---|
 | InferenceRouter | services/inference/router.py | completed |
-| Event publisher | services/control-plane/core/events.py | not created |
-| Agent base class | services/worker/agent/base.py | not created |
-| Valkey config | docker-compose.yml | not created |
-| Dashboard events page | services/dashboard/app/events/page.tsx | not created |
+| Event publisher | services/control-plane/core/events.py | completed |
+| Agent base class | services/worker/agent/base.py | completed |
+| Celery worker app | services/worker/celery_app.py | completed |
+| Agent task runner | services/worker/tasks.py | completed |
+| Filesystem tool | services/worker/tools/filesystem.py | completed |
+| Web search tool | services/worker/tools/search.py | completed |
+| Agents API route | services/control-plane/api/routes/agents.py | completed |
+| Events WebSocket | services/control-plane/api/routes/events_ws.py | completed |
+| DB Models | services/control-plane/models/models.py | completed |
+| Pydantic Schemas | services/control-plane/schemas/schemas.py | completed |
+| Dashboard home | services/dashboard/app/page.tsx | completed |
+| Dashboard events page | services/dashboard/app/events/page.tsx | completed |
+| Dashboard agents page | services/dashboard/app/agents/page.tsx | completed |
 
 ---
 
@@ -138,3 +147,5 @@ None yet — project not started.
 <!-- AGENT: paste your own summary here at end of session -->
 Session 1: Initialized Git repository with author `osamaaltaf-pk`. Created folder skeleton and delivered configuration files (docker-compose, Makefile, .env, etc.) and basic FastAPI skeleton. Committed as chore(repo): initial scaffold (822f6f6).
 Session 2: Connected PostgreSQL (async SQLAlchemy 2.0 + asyncpg) and Valkey (valkey-py async client) to FastAPI. Configured async lifespan context manager in main.py for resource pools, and integrated live connection checks in health endpoint. Wrote automated test suite. Committed as feat(control-plane): add postgres and valkey core connectivity (b807baf).
+Session 3-4: Built complete Phase 1: event publisher (events.py + XADD), SQLAlchemy models, Pydantic schemas, agents spawn API, WebSocket event feed, Celery worker (celery_app.py + tasks.py), ReactiveAgent loop, FilesystemTool, SearchTool (DuckDuckGo), full Next.js dashboard (home + events + agents pages). Committed as feat(control-plane): implement full phase 1 (afad16f).
+Session 5: Fixed all Docker health regressions — worker NameError (Optional import), control-plane healthcheck 404 (wrong URL), Qdrant healthcheck curl-not-found (switched to TCP), worker inherited HTTP healthcheck (overrode with celery inspect ping). All 7 containers now healthy. Committed as fix: resolve all container health issues (ccd6a4d).
