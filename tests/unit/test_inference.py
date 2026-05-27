@@ -27,7 +27,7 @@ class MockHttpxResponse:
 def patch_clients(monkeypatch) -> None:
     # 1. Mock ollama.AsyncClient.chat method directly
     async def mock_ollama_chat(self, *args, **kwargs) -> dict:
-        model = kwargs.get("model", "miniCPM5-1B")
+        model = kwargs.get("model", "openbmb/minicpm5:fp16")
         return {
             "model": model,
             "message": {
@@ -73,10 +73,10 @@ async def test_router_routing_decision_ollama() -> None:
     """
     router = InferenceRouter()
     result = await router.chat(
-        model="miniCPM5-1B",
+        model="openbmb/minicpm5:fp16",
         messages=[{"role": "user", "content": "Hello world"}]
     )
-    assert result["model"] == "miniCPM5-1B"
+    assert result["model"] == "openbmb/minicpm5:fp16"
     assert "Mocked Ollama response" in result["message"]["content"]
     assert result["usage"]["total_tokens"] == 36
 
@@ -89,7 +89,7 @@ async def test_router_routing_decision_sglang_context() -> None:
     router = InferenceRouter()
     # Explicit context length override
     result = await router.chat(
-        model="miniCPM5-1B",
+        model="openbmb/minicpm5:fp16",
         messages=[{"role": "user", "content": "Hello"}],
         context_length=35000
     )
@@ -104,7 +104,7 @@ async def test_router_routing_decision_llamacpp_hardware() -> None:
     """
     router = InferenceRouter()
     result = await router.chat(
-        model="miniCPM5-1B",
+        model="openbmb/minicpm5:fp16",
         messages=[{"role": "user", "content": "Hello"}],
         hardware="no_gpu"
     )
@@ -117,7 +117,7 @@ async def test_router_routing_decision_vllm_batching() -> None:
     """
     router = InferenceRouter()
     result = await router.chat(
-        model="miniCPM5-1B",
+        model="openbmb/minicpm5:fp16",
         messages=[{"role": "user", "content": "Hello"}],
         batch_size=5
     )
@@ -130,7 +130,7 @@ async def test_router_routing_decision_tensorrt_gpu() -> None:
     """
     router = InferenceRouter()
     result = await router.chat(
-        model="miniCPM5-1B",
+        model="openbmb/minicpm5:fp16",
         messages=[{"role": "user", "content": "Hello"}],
         hardware="nvidia"
     )
@@ -143,7 +143,7 @@ async def test_router_routing_decision_litert_edge() -> None:
     """
     router = InferenceRouter()
     result = await router.chat(
-        model="miniCPM5-1B",
+        model="openbmb/minicpm5:fp16",
         messages=[{"role": "user", "content": "Hello"}],
         hardware="edge"
     )
@@ -163,7 +163,7 @@ async def test_router_graceful_fallback(monkeypatch) -> None:
     router = InferenceRouter()
     # Forces routing to SGLang via high context, which fails and triggers Ollama fallback
     result = await router.chat(
-        model="miniCPM5-1B",
+        model="openbmb/minicpm5:fp16",
         messages=[{"role": "user", "content": "Hello"}],
         context_length=40000
     )
@@ -179,7 +179,7 @@ async def test_api_chat_route_success() -> None:
     Verifies the FastAPI routing, input validation (Pydantic v2), and output response schema.
     """
     payload = {
-        "model": "miniCPM5-1B",
+        "model": "openbmb/minicpm5:fp16",
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Explain 32k context size."}
@@ -193,7 +193,7 @@ async def test_api_chat_route_success() -> None:
 
     assert response.status_code == 200
     data = response.json()
-    assert data["model"] == "miniCPM5-1B"
+    assert data["model"] == "openbmb/minicpm5:fp16"
     assert data["message"]["role"] == "assistant"
     assert "Mocked Ollama response" in data["message"]["content"]
     assert "total_tokens" in data["usage"]

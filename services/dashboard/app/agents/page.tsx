@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 export default function SpawnAgentPage() {
-  const [model, setModel] = useState("miniCPM5-1B");
+  const [model, setModel] = useState("openbmb/minicpm5:fp16");
   const [task, setTask] = useState("");
   const [hardware, setHardware] = useState("no_gpu");
   const [status, setStatus] = useState<"idle" | "submitting" | "spawned" | "error">("idle");
@@ -64,7 +64,7 @@ export default function SpawnAgentPage() {
                 onChange={(e) => setModel(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
               >
-                <option value="miniCPM5-1B">miniCPM5-1B (32k context — primary test model)</option>
+                <option value="openbmb/minicpm5:fp16">openbmb/minicpm5:fp16 (32k context — primary test model)</option>
                 <option value="deepseek-r1:7b">deepseek-r1:7b (reasoning — optional)</option>
               </select>
             </div>

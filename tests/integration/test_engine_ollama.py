@@ -4,7 +4,7 @@ Engine Test 1: Ollama
 Validates that the Ollama inference engine:
   1. Is reachable on its configured host.
   2. Can list available models.
-  3. Responds correctly to a real chat completion with miniCPM5-1B.
+  3. Responds correctly to a real chat completion with openbmb/minicpm5:fp16.
   4. The NeuralFolk /api/v1/inference/chat route correctly routes to Ollama.
 
 Run with:
@@ -15,7 +15,7 @@ import httpx
 import asyncio
 from typing import Dict, Any
 
-MODEL = "miniCPM5-1B"
+MODEL = "openbmb/minicpm5:fp16"
 OLLAMA_HOSTS = ["http://localhost:11434", "http://127.0.0.1:11434"]
 CONTROLPLANE_URL = "http://localhost:8000"
 TIMEOUT = 120.0  # model load can be slow on first run
@@ -64,7 +64,7 @@ def test_ollama_reachable(ollama_host: str) -> None:
 @pytest.mark.integration
 def test_ollama_model_pull(ollama_host: str) -> None:
     """
-    Ensures miniCPM5-1B is pulled and present in Ollama.
+    Ensures openbmb/minicpm5:fp16 is pulled and present in Ollama.
     If not present, triggers a pull (can take time — uses generous timeout).
     """
     with httpx.Client(timeout=10.0) as client:
@@ -94,7 +94,7 @@ def test_ollama_model_pull(ollama_host: str) -> None:
 @pytest.mark.integration
 def test_ollama_chat_completion(ollama_host: str) -> None:
     """
-    Sends a real chat request to Ollama with miniCPM5-1B.
+    Sends a real chat request to Ollama with openbmb/minicpm5:fp16.
     Validates response structure: model name, message role, non-empty content.
     """
     payload = {

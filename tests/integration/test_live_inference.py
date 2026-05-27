@@ -6,11 +6,11 @@ from core.config import settings
 @pytest.mark.asyncio
 async def test_live_inference_stacks() -> None:
     """
-    Verifies that the canonical model (miniCPM5-1B) can be successfully loaded and queried
+    Verifies that the canonical model (openbmb/minicpm5:fp16) can be successfully loaded and queried
     across all active inference backends without mocks.
     """
     payload = {
-        "model": "miniCPM5-1B",
+        "model": "openbmb/minicpm5:fp16",
         "messages": [{"role": "user", "content": "Ping"}]
     }
 
@@ -27,7 +27,7 @@ async def test_live_inference_stacks() -> None:
             print(f"Probing Ollama at: {host}")
             async with httpx.AsyncClient() as client:
                 res = await client.post(f"{host}/api/chat", json={
-                    "model": "miniCPM5-1B",
+                    "model": "openbmb/minicpm5:fp16",
                     "messages": [{"role": "user", "content": "Ping"}],
                     "stream": False
                 }, timeout=10.0)

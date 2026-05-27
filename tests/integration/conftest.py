@@ -17,7 +17,7 @@ for p in (_CP_PATH, _INFERENCE_PATH):
         sys.path.insert(0, p)
 
 # ── Constants ──────────────────────────────────────────────────────────────
-TEST_MODEL = "miniCPM5-1B"
+TEST_MODEL = "openbmb/minicpm5:fp16"
 CONTROLPLANE_URL = os.getenv("CONTROLPLANE_URL", "http://localhost:8000")
 
 # Engine host resolution — env vars take precedence for CI/CD overrides

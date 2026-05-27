@@ -10,7 +10,7 @@ class ChatMessage(BaseModel):
     content: str = Field(..., description="Content text")
 
 class InferenceRequest(BaseModel):
-    model: str = Field(..., description="Model identifier (e.g., 'miniCPM5-1B')")
+    model: str = Field(..., description="Model identifier (e.g., 'openbmb/minicpm5:fp16')")
     messages: List[ChatMessage]
     temperature: Optional[float] = Field(0.7, ge=0.0, le=2.0)
     max_tokens: Optional[int] = Field(None, gt=0)

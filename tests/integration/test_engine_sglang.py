@@ -17,7 +17,7 @@ import pytest
 import httpx
 import json
 
-MODEL = "miniCPM5-1B"
+MODEL = "openbmb/minicpm5:fp16"
 SGLANG_HOSTS = ["http://localhost:30000", "http://127.0.0.1:30000"]
 CONTROLPLANE_URL = "http://localhost:8000"
 TIMEOUT = 120.0
@@ -69,7 +69,7 @@ def test_sglang_models_list(sglang_host: str) -> None:
 
 @pytest.mark.integration
 def test_sglang_chat_completion(sglang_host: str) -> None:
-    """Real chat completion with miniCPM5-1B via SGLang."""
+    """Real chat completion with openbmb/minicpm5:fp16 via SGLang."""
     payload = {
         "model": MODEL,
         "messages": [{"role": "user", "content": "Reply with exactly one word: hello"}],

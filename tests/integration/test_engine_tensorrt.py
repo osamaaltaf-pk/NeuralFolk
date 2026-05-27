@@ -4,21 +4,21 @@ Engine Test 5: TensorRT-LLM
 Validates TensorRT-LLM NVIDIA-optimized inference engine:
   1. Service health check.
   2. Model listing via Triton-compatible or OpenAI-compatible API.
-  3. Real chat completion with miniCPM5-1B (pre-compiled TRT engine).
+  3. Real chat completion with openbmb/minicpm5:fp16 (pre-compiled TRT engine).
   4. Verifies InferenceRouter routes hardware=nvidia to TensorRT-LLM.
   5. Validates throughput metrics (tokens/sec) are included in response.
 
 TensorRT-LLM runs as: docker compose --profile tensorrt up -d tensorrt
 Run tests with: pytest tests/integration/test_engine_tensorrt.py -v -s
 
-NOTE: Requires NVIDIA GPU with CUDA 12 + TensorRT engine pre-built for miniCPM5-1B.
+NOTE: Requires NVIDIA GPU with CUDA 12 + TensorRT engine pre-built for openbmb/minicpm5:fp16.
       Model must be compiled to TRT plan file before serving — auto-skipped if unavailable.
 """
 import pytest
 import httpx
 import json
 
-MODEL = "miniCPM5-1B"
+MODEL = "openbmb/minicpm5:fp16"
 TENSORRT_HOSTS = ["http://localhost:8002", "http://127.0.0.1:8002"]
 CONTROLPLANE_URL = "http://localhost:8000"
 TIMEOUT = 120.0
@@ -47,7 +47,7 @@ def tensorrt_host() -> str:
         pytest.skip(
             "TensorRT-LLM not reachable.\n"
             "Start with: docker compose --profile tensorrt up -d tensorrt\n"
-            "Requires NVIDIA GPU (RTX 2070+) and pre-compiled TRT engine for miniCPM5-1B."
+            "Requires NVIDIA GPU (RTX 2070+) and pre-compiled TRT engine for openbmb/minicpm5:fp16."
         )
     return host
 

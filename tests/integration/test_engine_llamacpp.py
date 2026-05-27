@@ -12,13 +12,13 @@ llama.cpp runs as: docker compose --profile llamacpp up -d llamacpp
 Run tests with: pytest tests/integration/test_engine_llamacpp.py -v -s
 
 NOTE: llama.cpp runs on CPU — no GPU required. Slower but always available.
-      Model file must be mounted at /models/miniCPM5-1B.gguf in the container.
+      Model file must be mounted at /models/openbmb/minicpm5:fp16.gguf in the container.
 """
 import pytest
 import httpx
 import json
 
-MODEL = "miniCPM5-1B"
+MODEL = "openbmb/minicpm5:fp16"
 LLAMACPP_HOSTS = ["http://localhost:8080", "http://127.0.0.1:8080"]
 CONTROLPLANE_URL = "http://localhost:8000"
 TIMEOUT = 180.0  # CPU inference is slower — generous timeout
@@ -42,7 +42,7 @@ def llamacpp_host() -> str:
         pytest.skip(
             "llama.cpp server not reachable.\n"
             "Start with: docker compose --profile llamacpp up -d llamacpp\n"
-            "Ensure the GGUF model file is mounted at /models/miniCPM5-1B.gguf"
+            "Ensure the GGUF model file is mounted at /models/openbmb/minicpm5:fp16.gguf"
         )
     return host
 

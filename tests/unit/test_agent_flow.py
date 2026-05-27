@@ -57,7 +57,7 @@ async def test_search_tool_real() -> None:
 @pytest.mark.asyncio
 async def test_reactive_agent_flow() -> None:
     agent_id = "test-agent-123"
-    model = "miniCPM5-1B"
+    model = "openbmb/minicpm5:fp16"
     task = "Evaluate local AI infrastructure stacks"
     
     agent = ReactiveAgent(
@@ -95,7 +95,7 @@ async def test_reactive_agent_flow() -> None:
                 "model": model,
                 "message": {
                     "role": "assistant",
-                    "content": "Optimized stack loading for miniCPM5-1B verified successfully."
+                    "content": "Optimized stack loading for openbmb/minicpm5:fp16 verified successfully."
                 },
                 "usage": {"total_tokens": 120}
             })

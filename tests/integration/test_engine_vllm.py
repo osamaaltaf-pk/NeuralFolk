@@ -4,7 +4,7 @@ Engine Test 2: vLLM
 Validates the vLLM continuous-batching inference engine:
   1. Service health check on /health endpoint.
   2. Lists models via /v1/models (OpenAI-compatible API).
-  3. Real chat completion via /v1/chat/completions with miniCPM5-1B.
+  3. Real chat completion via /v1/chat/completions with openbmb/minicpm5:fp16.
   4. Verifies InferenceRouter routes batch_size > 4 traffic to vLLM.
   5. Validates streaming SSE (server-sent events) format.
 
@@ -19,7 +19,7 @@ import httpx
 import json
 from typing import Any, Dict
 
-MODEL = "miniCPM5-1B"
+MODEL = "openbmb/minicpm5:fp16"
 VLLM_HOSTS = ["http://localhost:8001", "http://127.0.0.1:8001"]  # Port 8001 to avoid collision with control-plane
 CONTROLPLANE_URL = "http://localhost:8000"
 TIMEOUT = 120.0
@@ -44,7 +44,7 @@ def vllm_host() -> str:
     if host is None:
         pytest.skip(
             "vLLM not reachable. Start with: docker compose --profile vllm up -d vllm\n"
-            "Requires CUDA GPU + VRAM >= 4GB for miniCPM5-1B."
+            "Requires CUDA GPU + VRAM >= 4GB for openbmb/minicpm5:fp16."
         )
     return host
 

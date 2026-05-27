@@ -93,7 +93,7 @@ export default function OverviewPage() {
           <div className="space-y-4">
             <div className="space-y-1">
               <div className="flex justify-between text-sm text-slate-400">
-                <span>VRAM Allocation (miniCPM5-1B)</span>
+                <span>VRAM Allocation (openbmb/minicpm5:fp16)</span>
                 <span>~1.8 GB / 8.0 GB</span>
               </div>
               <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
