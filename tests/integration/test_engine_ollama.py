@@ -125,7 +125,7 @@ def test_ollama_via_controlplane(ollama_host: str) -> None:
     """
     Tests that the NeuralFolk control-plane /api/v1/inference/chat route
     correctly routes to Ollama and returns a valid response.
-    This is the end-to-end path: client → FastAPI → InferenceRouter → OllamaBackend.
+    This is the end-to-end path: client -> FastAPI -> InferenceRouter -> OllamaBackend.
     """
     try:
         with httpx.Client(timeout=5.0) as client:
@@ -152,7 +152,7 @@ def test_ollama_via_controlplane(ollama_host: str) -> None:
     content = data["message"].get("content", "")
     assert len(content) > 0, "Empty content from control-plane inference route"
 
-    print(f"\n[OK] Control-plane → Ollama route verified.")
+    print(f"\n[OK] Control-plane -> Ollama route verified.")
     print(f"     Response: {content[:200]}")
 
 
