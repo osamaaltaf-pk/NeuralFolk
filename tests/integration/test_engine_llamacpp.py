@@ -18,7 +18,7 @@ import pytest
 import httpx
 import json
 
-MODEL = "openbmb/minicpm5:fp16"
+MODEL = "granite-3.1-8b-instruct"
 LLAMACPP_HOSTS = ["http://localhost:8080", "http://127.0.0.1:8080"]
 CONTROLPLANE_URL = "http://localhost:8000"
 TIMEOUT = 180.0  # CPU inference is slower — generous timeout

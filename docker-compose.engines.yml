@@ -27,7 +27,7 @@ services:
     profiles: ["vllm"]
     command: >
       --model openbmb/MiniCPM-1B-sft-bf16
-      --served-model-name miniCPM5-1B
+      --served-model-name openbmb/minicpm5:fp16
       --host 0.0.0.0
       --port 8000
       --max-model-len 32768
@@ -62,7 +62,7 @@ services:
     command: >
       python -m sglang.launch_server
       --model-path openbmb/MiniCPM-1B-sft-bf16
-      --served-model-name miniCPM5-1B
+      --served-model-name openbmb/minicpm5:fp16
       --host 0.0.0.0
       --port 30000
       --context-length 32768
@@ -89,23 +89,12 @@ services:
     restart: unless-stopped
 
   # ── llama.cpp — CPU/low-VRAM, no GPU required ────────────────────────────
-  # Requires GGUF model file at path set by MODELS_PATH env var (default ./models/)
-  # Download: ollama pull miniCPM5-1B then export, or download GGUF from HuggingFace
   llamacpp:
-    image: ghcr.io/ggerganov/llama.cpp:server
+    image: redhat/granite-3.1-8b-instruct:latest
     container_name: neuralfolk-llamacpp
     profiles: ["llamacpp"]
-    command: >
-      -m /models/miniCPM5-1B.gguf
-      --host 0.0.0.0
-      --port 8080
-      --ctx-size 32768
-      --threads 8
-      --n-gpu-layers 0
     ports:
       - "8080:8080"
-    volumes:
-      - ${MODELS_PATH:-./models}:/models:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
       interval: 15s
