@@ -314,3 +314,30 @@ DISCOVERY: The worker service shares the same Dockerfile as control-plane. That 
 IMPACT: Worker always shows `unhealthy` even when fully operational.
 WORKAROUND: Override the healthcheck in docker-compose.yml for the worker service using `celery -A worker.celery_app inspect ping` which pings the live Celery broker and returns `pong` if the worker is alive.
 ---
+
+--- GOTCHA 3 ---
+DATE: 2026-05-28
+COMPONENT: tests/integration/test_engine_ollama.py / docker exec pull
+DISCOVERY: Executing two parallel pull requests (one via docker exec, one via HTTP API) for the exact same model inside Ollama causes the Ollama registry client to abort and restart downloading the active layer from the beginning.
+IMPACT: Highly inefficient, resetting a 2.2GB download and wasting bandwidth.
+WORKAROUND: Only trigger one model pull at a time; kill redundant CLI pull tasks to let the pytest HTTP API pull manage the stream end-to-end.
+---
+
+--- GOTCHA 4 ---
+DATE: 2026-05-28
+COMPONENT: tests/integration/test_engine_ollama.py / Windows terminal
+DISCOVERY: Printing literal unicode arrow characters (→) to stdout inside pytest on Windows CP1252 terminal crashes the test suite with UnicodeEncodeError.
+IMPACT: Fails the test runs even when the underlying logic/routing is fully functional.
+WORKAROUND: Replace all literal unicode characters with standard CP1252-safe ASCII characters (like ->) in stdout print statements.
+---
+
+--- DECISION 11 ---
+DATE: 2026-05-28
+COMMIT: 0ddfbe1
+CONTEXT: Enforcing resources and order during multi-engine testing on prosumer/consumer Windows hardware.
+CHOICE: Strictly enforce sequential single-engine testing, ensuring only one model container (Ollama, llama.cpp, etc.) runs at any given time.
+REJECTED: Keeping multiple model containers active concurrently; this triggers virtual memory paging file exhaustion errors (HRESULT 80004005 / HRESULT 800705af) on Windows.
+CONSTRAINT: Local CPU and RAM resource exhaustion on host system.
+TESTS_CREATED: none (verified via container lifecycle management and test runs)
+REVISIT_IF: Hardware is upgraded to dedicated high-end server clusters with abundant virtual memory/RAM.
+---
